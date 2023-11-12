@@ -6,10 +6,12 @@ from   .amr_coref_model import AMRCorefModel
 from   .coref_data_loader import get_data_loader_from_data
 from   .build_coref_tdata import get_serialized_graph_data
 from   .clustering import get_predicted_clusters
+from   . import coref_featurizer
 
 
 class Inference(object):
-    def __init__(self, model_dir, show_prog=False, greedyness=0.0, device=None, **kwargs):
+    def __init__(self, model_dir, show_prog=False, greedyness=0.0, device=None,
+                 use_multithreading=True, **kwargs):
         self.model = AMRCorefModel.from_pretrained(model_dir, device=device)
         # overide max_dist is in kwargs
         if 'max_dist' in kwargs:
@@ -19,6 +21,8 @@ class Inference(object):
         self.show_prog     = show_prog
         self.greedyness    = greedyness
         self.cluster_dicts = {}     # saved for debug
+        coref_featurizer.use_multithreading = use_multithreading
+        self._use_multithreading = use_multithreading
 
     # Coreference graph strings or penman graphs
     # !!! Note that if loading penman graphs, they must have been encoded using the NoOpModel
@@ -44,7 +48,10 @@ class Inference(object):
         # combine everything and save to a temporary file
         tdata_dict = {'clusters':clusters, 'doc_gids':doc_gids, 'gdata':gdata_dict}
         # Create the data loader
-        self.test_dloader = get_data_loader_from_data(tdata_dict, self.model, show_prog=self.show_prog, shuffle=False)
+        dloader_params = dict(show_prog=self.show_prog, shuffle=False)
+        if not self._use_multithreading:
+            dloader_params['num_workers'] = 0
+        self.test_dloader = get_data_loader_from_data(tdata_dict, self.model, **dloader_params)
         self.mdata        = self.test_dloader.dataset.mdata
         # Run the model and cluster the data
         results = self.model.process(self.test_dloader, self.show_prog)

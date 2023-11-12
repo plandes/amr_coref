@@ -1,6 +1,7 @@
 import re
 import logging
 from   multiprocessing import Pool
+from   multiprocessing.pool import ThreadPool
 from   tqdm import tqdm
 import numpy
 
@@ -224,6 +225,7 @@ class CorefFeaturizer(object):
 #### Build the single data and the 2D matrix of head-mention -> antecedent pair
 ###############################################################################
 gfeaturizer, gmax_dist = None, None    # for multiprocessing
+use_multithreading = True
 def build_coref_features(mdata, model, **kwargs):
     chunksize = kwargs.get('feat_chunksize',          200)
     maxtpc    = kwargs.get('feat_maxtasksperchild',   200)
@@ -239,13 +241,16 @@ def build_coref_features(mdata, model, **kwargs):
         feat_data[dn] = [None]*len(mlist)
     # Loop through and get the pair features for all antecedents
     pbar = tqdm(total=len(idx_keys), ncols=100, disable=not show_prog)
-    with Pool(processes=processes, maxtasksperchild=maxtpc) as pool:
-        for fdata in pool.imap_unordered(worker, idx_keys, chunksize=chunksize):
-            dn, midx, sspans, dspans, words, sfeats, pfeats, slabels, plabels = fdata
-            feat_data[dn][midx] = {'sspans':sspans,   'dspans':dspans, 'words':words,
-                                   'sfeats':sfeats,   'pfeats':pfeats,
-                                   'slabels':slabels, 'plabels':plabels}
-            pbar.update(1)
+    if use_multithreading:
+        pool = Pool(processes=processes, maxtasksperchild=maxtpc)
+    else:
+        pool = ThreadPool(processes=processes)
+    for fdata in pool.imap_unordered(worker, idx_keys, chunksize=chunksize):
+        dn, midx, sspans, dspans, words, sfeats, pfeats, slabels, plabels = fdata
+        feat_data[dn][midx] = {'sspans':sspans,   'dspans':dspans, 'words':words,
+                               'sfeats':sfeats,   'pfeats':pfeats,
+                               'slabels':slabels, 'plabels':plabels}
+        pbar.update(1)
     pbar.close()
     # Error check
     for dn, feat_list in feat_data.items():
