@@ -4,7 +4,7 @@ from zensols.pybuild import SetupUtil
 
 su = SetupUtil(
     setup_path=Path(__file__).parent.absolute(),
-    name="amr_coref",
+    name="zensols.amr_coref",
     package_names=['amr_coref'],
     description='A python library / model for creating co-references between AMR graph nodes.',
     user='plandes',
