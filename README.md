@@ -2,6 +2,15 @@
 
 **A python library / model for creating co-references between AMR graph nodes.**
 
+
+## Install
+
+To install:
+```bash
+pip install zensols.amr_coref
+```
+
+
 ## About
 amr_coref is a python library and trained model designed to do co-referencing
 between [Abstract Meaning Representation](https://amr.isi.edu/) graphs.
