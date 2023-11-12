@@ -42,6 +42,10 @@ This is a fork of [Brad Jascob's](https://github.com/bjascob/amr_coref)
 non-Debian style OSs.  See [#3](https://github.com/bjascob/amr_coref/issues/3)
 for details on the issue.
 
+### Usage
+
+To turn multi-threading off, create the [Interface] instance with `use_multithreading=False`.
+
 
 ## Installation and usage
 There is currently no pip installation. To use the library, simply clone the code and use it in place.
@@ -66,3 +70,7 @@ You'll need `amr_annotation_3.0` and `GloVe/glove.6B.50d.txt` in your `data` dir
 
 The first few scripts will create the training data in `data/tdata` and the model training
 script will create `data/model`. Training takes less than 4 hours.
+
+
+<!-- links -->
+[Interface]: https://github.com/plandes/amr_coref/blob/8fae9328d86b02940320567cce33fcc89a1a22d7/src/python/amr_coref/coref/inference.py#L14
