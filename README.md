@@ -28,7 +28,7 @@ See the uploaded file in [#1](https://github.com/bjascob/amr_coref/issues/1) for
 * [VGAE as Cheap Supervision for AMR Coreference Resolution](https://github.com/IreneZihuiLi/VG-AMRCoref)
 * [End-to-end AMR Coreference Resolution](https://github.com/Sean-Blank/AMRcoref)
 
-This is a fork of [Brad Jascob](https://github.com/bjascob/amr_coref)
+This is a fork of [Brad Jascob's](https://github.com/bjascob/amr_coref)
 `amr_coref` repository, and modified to address the multiprocessing issues on
 non-Debian style OSs.  See [#3](https://github.com/bjascob/amr_coref/issues/3)
 for details on the issue.
