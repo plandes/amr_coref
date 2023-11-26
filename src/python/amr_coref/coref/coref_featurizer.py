@@ -245,13 +245,16 @@ def build_coref_features(mdata, model, **kwargs):
         pool = Pool(processes=processes, maxtasksperchild=maxtpc)
     else:
         pool = ThreadPool(processes=processes)
-    for fdata in pool.imap_unordered(worker, idx_keys, chunksize=chunksize):
-        dn, midx, sspans, dspans, words, sfeats, pfeats, slabels, plabels = fdata
-        feat_data[dn][midx] = {'sspans':sspans,   'dspans':dspans, 'words':words,
-                               'sfeats':sfeats,   'pfeats':pfeats,
-                               'slabels':slabels, 'plabels':plabels}
-        pbar.update(1)
-    pbar.close()
+    try:
+        for fdata in pool.imap_unordered(worker, idx_keys, chunksize=chunksize):
+            dn, midx, sspans, dspans, words, sfeats, pfeats, slabels, plabels = fdata
+            feat_data[dn][midx] = {'sspans':sspans,   'dspans':dspans, 'words':words,
+                                   'sfeats':sfeats,   'pfeats':pfeats,
+                                   'slabels':slabels, 'plabels':plabels}
+            pbar.update(1)
+        pbar.close()
+    finally:
+        pool.close()
     # Error check
     for dn, feat_list in feat_data.items():
         assert None not in feat_list
