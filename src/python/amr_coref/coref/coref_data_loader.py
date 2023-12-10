@@ -174,7 +174,7 @@ class CoRefCollator(object):
 # or none of the entries have pairs.
 class CorefBatchSampler(Sampler):
     def __init__(self, dataset, batch_size, shuffle):
-        super().__init__(dataset)
+        super().__init__()
         self.mdata      = dataset.mdata
         self.batch_size = batch_size
         self.shuffle    = shuffle
